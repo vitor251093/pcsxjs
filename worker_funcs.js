@@ -94,44 +94,15 @@ var ls = Module.cwrap("ls", "null", ["string"])
 var padStatus1;
 var isoDB;
 var stdout_array;
-var readfile_and_run = function (iso_name, blob) {
-	var run_arr = function (arr) {
-		//Module.FS_createDataFile("/", iso_name, arr, true, true);
-		stdout_array = arr;
-		Module.setStatus('Running!');
-		pcsx_init("/" + iso_name);
-		padStatus1 = _get_ptr(-2);
-		vram_ptr = _get_ptr(-1);
-		soundbuffer_ptr = _get_ptr(7);
-		isMute_ptr = _get_ptr(8);
-		cout_print("before mainloop\n");
-		pcsx_mainloop();
-	}
-	cout_print("readfile and run ");
-	var reader = new FileReader();
-	Module.setStatus("reading file");
-	reader.onprogress = function (e) {
-		if (e.lengthComputable) {
-			//cout_print(Math.round((e.loaded / e.total) * 100) + "%");
-			set_progress('readfile', {
-				value: e.loaded,
-				max: e.total,
-				hidden: false
-			});
-		} else
-			cout_print(e.loaded + "bytes")
-		//document.getElementById("start").disabled=false		
-	}
-	reader.onload = function (e) {
-		cout_print("" + iso_name + " loaded");
-		set_progress('readfile', {
-			value: 1,
-			max: 1,
-			hidden: false
-		});
-		run_arr(new Uint8Array(this.result))
-	}
-	reader.readAsArrayBuffer(blob);
+var readcd_and_run = function () {
+	Module.setStatus('Running!');
+	pcsx_init(null);
+	padStatus1 = _get_ptr(-2);
+	vram_ptr = _get_ptr(-1);
+	soundbuffer_ptr = _get_ptr(7);
+	isMute_ptr = _get_ptr(8);
+	cout_print("before mainloop\n");
+	pcsx_mainloop();
 }
 
 var event_history = [];
@@ -184,10 +155,11 @@ var main_onmessage = function (event) {
 		case "ls":
 			ls(data.dir);
 			break;
-		case "loadfile":
+
+		case "loadcd":
 			Module.setStatus('Downloading...');
 			cout_print(data.file.name)
-			readfile_and_run(data.file.name, data.file);
+			readcd_and_run();
 			break;
 
 		case "loadurl":
