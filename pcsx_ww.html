@@ -31,12 +31,11 @@
     
     </div>
     <div>
-        <input type='button' onclick="Module.goFullscreen()" value='Fullscreen'>            
-          </div>    <input type="file" 
-        id="iso_opener" 
-        onchange="pcsx_readfile(this)" 
-        disabled=true style="font-size: 30px" />
-      </div>
+      <input type='button' onclick="Module.goFullscreen()" value='Fullscreen'/>
+      <button id="url_opener" onclick="pcsx_readurl()" disabled=true>Start from URL</button> 
+      <input type="file" id="iso_opener" onchange="pcsx_readfile(this)" disabled=true style="font-size: 30px" />
+    </div>    
+  </div>
   <div v-if="show_info" class="infobox">
     <div class="spinner" id='spinner'></div>
     <div class="emscripten" id="status"> 

@@ -163,6 +163,7 @@ function var_setup() {
   pcsx_worker = new Worker("pcsx_worker.js");
   pcsx_worker.onmessage = pcsx_worker_onmessage;
   document.getElementById('iso_opener').disabled=false;
+  document.getElementById('url_opener').disabled=false;
   var spinner = document.getElementById('spinner');
   spinner.parentElement.removeChild(spinner);  
   setTimeout("Module.setStatus('open an iso file using the above button.')", 2);
@@ -206,11 +207,29 @@ var check_controller = function () {
 var file_list;
 var pcsx_readfile = function (controller) {
   document.getElementById('iso_opener').disabled=true;  
+  document.getElementById('url_opener').disabled=true;  
   cout_print("pcsx_readfile\n");
   file_list = controller.files;
   pcsx_worker.postMessage({ cmd: "loadfile", file: controller.files[0] });
   setTimeout("check_controller()", 10);
-  return;
+}
+var pcsx_readurl = function () {
+  document.getElementById('iso_opener').disabled=true;  
+  document.getElementById('url_opener').disabled=true;  
+  cout_print("pcsx_readfile\n");
+  var url = "/discs/yu-gi-oh!_-_forbidden_memories.bin";
+  
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.responseType = 'blob';
+  xhr.onload = function(e) {
+    if (this.status == 200) {
+      var blob = this.response;
+      pcsx_worker.postMessage({ cmd: "loadfile", file: blob});
+      setTimeout("check_controller()", 10);
+    }
+  };
+  xhr.send();
 }
 
 function pcsx_worker_onmessage(event) {
